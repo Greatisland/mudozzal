@@ -26,7 +26,11 @@ window.env = {
    - `GOOGLE_API_KEY`: Google API 키
    - `GOOGLE_CX_ID`: Google Custom Search Engine ID
 
-2. 프로젝트를 배포합니다.
+2. 프로젝트를 Vercel에 연결하고 배포합니다:
+   - `vercel.json` 파일이 프로젝트 루트에 있는지 확인합니다.
+   - `build.js` 파일이 프로젝트 루트에 있는지 확인합니다.
+   - Vercel 대시보드에서 새 프로젝트를 생성하고 GitHub 저장소를 연결합니다.
+   - 배포 설정에서 프레임워크 프리셋을 "Other"로 선택합니다.
 
 ## 주의사항
 

@@ -4,6 +4,6 @@
     { "handle": "filesystem" },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
-  "buildCommand": "node -e \"const fs = require('fs'); const html = fs.readFileSync('index.html', 'utf8'); const replaced = html.replace('%%GOOGLE_API_KEY%%', process.env.GOOGLE_API_KEY || '').replace('%%GOOGLE_CX_ID%%', process.env.GOOGLE_CX_ID || ''); fs.writeFileSync('index.html', replaced);\"",
+  "buildCommand": "node build.js",
   "outputDirectory": "."
 }
