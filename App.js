@@ -110,7 +110,7 @@ const App = () => {
       React.createElement(
         "div",
         { className: "mt-2 text-sm text-purple-300" },
-        "⚡ 개선된 검색 결과를 제공합니다 ⚡"
+        "⚡⚡"
       )
     ),
     React.createElement(
