@@ -19,11 +19,17 @@ export const fetchImages = async (keyword) => {
     throw new Error("검색할 키워드를 입력해주세요.");
   }
 
-  const searchQuery = `무도 짤 ${keyword.trim()}`; // Updated search query
+  // 검색 쿼리 최적화: "무도 짤" 대신 "무한도전 짤"을 사용하고 키워드 위치 변경
+  const searchQuery = `무한도전 ${keyword.trim()} 짤`;
+
+  // API 파라미터 최적화:
+  // - imgSize=xlarge를 imgSize=large로 변경 (더 많은 이미지 포함)
+  // - safe=active를 safe=off로 변경 (필터링 감소)
+  // - 추가로 gl=kr 파라미터 추가 (한국 결과에 중점)
+  // - cr=countryKR 추가 (한국 컨텐츠 우선)
   const url = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX_ID}&q=${encodeURIComponent(
     searchQuery
-  )}&searchType=image&num=${NUM_RESULTS}&imgSize=xlarge&safe=active`;
-  // Added imgSize=xlarge and safe=active
+  )}&searchType=image&num=${NUM_RESULTS}&imgSize=large&safe=off&gl=kr&cr=countryKR`;
 
   try {
     const response = await fetch(url);
@@ -50,6 +56,34 @@ export const fetchImages = async (keyword) => {
           snippet: item.snippet, // Keep for potential future use, but not displayed
         }));
     } else {
+      // 결과가 없을 경우 대체 쿼리로 재시도
+      console.log(
+        "첫 번째 쿼리로 결과를 찾지 못했습니다. 대체 쿼리로 시도합니다."
+      );
+      const alternativeQuery = `무도 ${keyword.trim()}`;
+      const alternativeUrl = `https://www.googleapis.com/customsearch/v1?key=${GOOGLE_API_KEY}&cx=${GOOGLE_CX_ID}&q=${encodeURIComponent(
+        alternativeQuery
+      )}&searchType=image&num=${NUM_RESULTS}&imgSize=large&safe=off&gl=kr&cr=countryKR`;
+
+      const alternativeResponse = await fetch(alternativeUrl);
+      const alternativeData = await alternativeResponse.json();
+
+      if (!alternativeResponse.ok) {
+        throw new Error("대체 쿼리 검색 중 오류가 발생했습니다.");
+      }
+
+      if (alternativeData.items && alternativeData.items.length > 0) {
+        return alternativeData.items
+          .filter((item) => item.link && item.image?.contextLink)
+          .map((item) => ({
+            id: item.link,
+            title: item.title,
+            url: item.link,
+            sourcePageUrl: item.image.contextLink,
+            snippet: item.snippet,
+          }));
+      }
+
       return [];
     }
   } catch (error) {

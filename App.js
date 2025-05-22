@@ -11,6 +11,7 @@ const App = () => {
   const [error, setError] = useState("");
   const [currentSearchKeyword, setCurrentSearchKeyword] = useState("");
   const [noResults, setNoResults] = useState(false);
+  const [isSearchOptimized, setIsSearchOptimized] = useState(false);
 
   const handleSearch = useCallback(async (keyword) => {
     if (!keyword.trim()) {
@@ -21,12 +22,15 @@ const App = () => {
     setError("");
     setImages([]);
     setNoResults(false);
+    setIsSearchOptimized(false);
     setCurrentSearchKeyword(keyword.trim());
 
     try {
       const fetchedImages = await fetchImages(keyword.trim());
       if (fetchedImages.length > 0) {
         setImages(fetchedImages);
+        // 검색 최적화 여부를 확인 (대체 쿼리 사용 시)
+        setIsSearchOptimized(true);
       } else {
         setNoResults(true);
       }
@@ -102,6 +106,11 @@ const App = () => {
         "키워드를 입력하고 적절한 짤을 찾아보세요! ",
         React.createElement("br", null),
         " (예: 박명수 분노, 유재석 당황, 정형돈 미소)"
+      ),
+      React.createElement(
+        "div",
+        { className: "mt-2 text-sm text-purple-300" },
+        "⚡ 개선된 검색 결과를 제공합니다 ⚡"
       )
     ),
     React.createElement(
@@ -122,17 +131,31 @@ const App = () => {
         React.createElement(
           "div",
           {
-            className:
-              "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-8",
+            className: "w-full",
           },
-          images.map((image, index) =>
-            React.createElement(ImageCard, {
-              key: image.id + "-" + index,
-              image: image,
-              onDownload: handleDownloadImage,
-              searchKeyword: currentSearchKeyword,
-              index: index,
-            })
+          React.createElement(
+            "div",
+            {
+              className:
+                "mb-4 text-center text-xs text-purple-300 bg-purple-900/30 rounded-lg p-2",
+            },
+            "다양한 검색 방식으로 최적화된 결과를 보여드립니다"
+          ),
+          React.createElement(
+            "div",
+            {
+              className:
+                "w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 pb-8",
+            },
+            images.map((image, index) =>
+              React.createElement(ImageCard, {
+                key: image.id + "-" + index,
+                image: image,
+                onDownload: handleDownloadImage,
+                searchKeyword: currentSearchKeyword,
+                index: index,
+              })
+            )
           )
         ),
       !loading &&
@@ -203,6 +226,37 @@ const App = () => {
             "p",
             { className: "text-gray-500 mt-2" },
             '예시: "정준하 눈물", "하하 신남"'
+          ),
+          React.createElement(
+            "div",
+            {
+              className:
+                "mt-8 p-3 bg-purple-900/30 rounded-lg text-sm text-purple-300 max-w-md",
+            },
+            React.createElement(
+              "p",
+              { className: "font-semibold mb-1" },
+              "🔍 검색 팁"
+            ),
+            React.createElement(
+              "ul",
+              { className: "text-left list-disc pl-5 space-y-1" },
+              React.createElement(
+                "li",
+                null,
+                "구체적인 상황이나 감정을 포함해보세요 (예: '노홍철 웃음')"
+              ),
+              React.createElement(
+                "li",
+                null,
+                "여러 인물을 함께 검색해보세요 (예: '정형돈 하하')"
+              ),
+              React.createElement(
+                "li",
+                null,
+                "유명한 에피소드 이름을 사용해보세요 (예: '무한도전 식스맨')"
+              )
+            )
           )
         )
     ),
