@@ -2,6 +2,10 @@
   "version": 2,
   "routes": [
     { "handle": "filesystem" },
+    {
+      "src": "/(.*)\\.js",
+      "headers": { "content-type": "application/javascript" }
+    },
     { "src": "/(.*)", "dest": "/index.html" }
   ],
   "buildCommand": "node build.js",
